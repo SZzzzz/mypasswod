@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import './password_record.dart';
+import 'package:flutter/services.dart' show rootBundle;
+
 
 void main() {
   runApp(MyApp());
@@ -73,7 +75,6 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     _getRecordsFromFile().then((value) {
       setState(() {
-        print(value);
         _records = value;
       });
     });
@@ -87,8 +88,8 @@ class _MyHomePageState extends State<MyHomePage> {
       if (await file.exists()) {
         String data = await file.readAsString();
       } else {
-        String mock = '[{"appName":"淘宝","key":"taobao","value":"123"}]]';
-        return json.decode(mock);
+        String mock = '[{"appName":"淘宝","key":"taobao","value":"123"}]';
+        return List<PasswordRecord>.from(json.decode(mock).map((v) => PasswordRecord.fromJson(v)));
       }
     } on FileSystemException {
       return [];

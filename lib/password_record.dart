@@ -3,7 +3,7 @@ class PasswordRecord {
   String key;
   String value;
 
-  PasswordRecord(this.appName, this.key, this.value);
+  PasswordRecord({this.appName, this.key, this.value});
 
   PasswordRecord.fromJson(Map<String, dynamic> jsonMap) {
     this.appName = jsonMap["appName"];
