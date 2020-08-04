@@ -37,6 +37,7 @@ class MyApp extends StatelessWidget {
       initialRoute: "/",
       routes: {
         "/": (context) => MyHomePage(title: "My Password"),
+        "detail": (context) => DetailPage(record: ModalRoute.of(context).settings.arguments)
       },
     );
   }
@@ -88,7 +89,7 @@ class _MyHomePageState extends State<MyHomePage> {
       if (await file.exists()) {
         String data = await file.readAsString();
       } else {
-        String mock = '[{"appName":"淘宝","key":"taobao","value":"123"}]';
+        String mock = '[{"appName":"淘宝","key":"taobao","value":"123"},{"appName":"支付宝","key":"zhifubao","value":"123"}]';
         return List<PasswordRecord>.from(json.decode(mock).map((v) => PasswordRecord.fromJson(v)));
       }
     } on FileSystemException {
@@ -129,37 +130,54 @@ class _MyHomePageState extends State<MyHomePage> {
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-          ],
-        ),
+      body: ListView.separated(
+        itemCount: _records.length,
+          separatorBuilder: (BuildContext context, int index) {
+            return Divider(color: Colors.blue);
+          },
+          itemBuilder: (BuildContext context, int index) {
+            return PasswordListItem(record: _records[index]);
+          }
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _addRecord,
         tooltip: '新增password',
         child: Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+}
+
+class PasswordListItem extends StatelessWidget {
+  final PasswordRecord record;
+
+  PasswordListItem({Key key, this.record}): super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+      child: GestureDetector(
+        child: Text(record.appName, style: TextStyle(fontSize: 20),),
+        onTap: () => Navigator.pushNamed(context, 'detail', arguments: record),
+      ),
+    );
+  }
+}
+
+class DetailPage extends StatelessWidget {
+  final PasswordRecord record;
+  DetailPage({Key key, this.record}): super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return Column(
+      children: <Widget>[
+        Text(record.appName),
+        Text(record.key),
+        Text(record.value),
+      ],
     );
   }
 }
