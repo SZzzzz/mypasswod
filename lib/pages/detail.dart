@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-import '../password_record.dart';
+import '../entities/password_record.dart';
 
 class DetailPage extends StatefulWidget {
   final PasswordRecord record;
@@ -25,6 +25,7 @@ class _DetailPageState extends State<DetailPage> {
 
   @override
   void initState() {
+    super.initState();
     _appNameController.text = record.appName;
     _usernameController.text = record.key;
     _passwordController.text = record.value;
@@ -80,10 +81,15 @@ class _DetailPageState extends State<DetailPage> {
                 labelText: '密码'
             ),
           ),
+          RaisedButton(
+            child: Text('生成密码'),
+            onPressed: () => {
+              print('生成密码')
+            },
+          )
         ],
       );
-    }
-    if (!isEditing) {
+    } else {
       return Column(
         children: <Widget>[
           Text(record.appName),

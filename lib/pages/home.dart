@@ -2,9 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:mypassword/entities/password_dict.dart';
 import 'package:path_provider/path_provider.dart';
 
-import '../password_record.dart';
+import '../entities/password_record.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
@@ -27,7 +28,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
 
   List<PasswordRecord> _records = [];
-  Map<String, String> _dict = {};
+  PasswordDict _dict;
 
   Future<File> _getLocalFile(String filename) async {
     String dir = (await getApplicationDocumentsDirectory()).path;
@@ -47,10 +48,10 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<List<PasswordRecord>> _getRecordsFromFile() async {
     String filename = "records.json";
     try {
-      Directory dir = await getApplicationDocumentsDirectory();
       File file = await _getLocalFile(filename);
       if (await file.exists()) {
         String data = await file.readAsString();
+        return List<PasswordRecord>.from(json.decode(data).map((v) => PasswordRecord.fromJson(v)));
       } else {
         String mock = '[{"appName":"淘宝","key":"taobao","value":"123"},{"appName":"支付宝","key":"zhifubao","value":"123"}]';
         return List<PasswordRecord>.from(json.decode(mock).map((v) => PasswordRecord.fromJson(v)));
@@ -59,21 +60,6 @@ class _MyHomePageState extends State<MyHomePage> {
       return [];
     }
   }
-
-//  Future<Map<String, String>> _getDictFromFile() async {
-//    String filename = "dict.json";
-//    try {
-//      File file = await _getLocalFile(filename);
-//      if (await file.exists()) {
-//        String data = await file.readAsString();
-//        return json.decode(data);
-//      } else {
-//        return {};
-//      }
-//    } on FileSystemException {
-//      return {};
-//    }
-//  }
 
   void _addRecord() {
     print("add record");
